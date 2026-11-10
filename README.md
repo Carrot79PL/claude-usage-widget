@@ -2,6 +2,8 @@
 
 Widget na pulpit macOS i aplikacja raportowa, które pokazują, ile limitu planu Claude (Pro/Max) już wykorzystałeś: **okno 5-godzinne** i **limit tygodniowy**, w procentach, z prognozą i analizą.
 
+![Zakładka Przegląd](docs/screenshot.png)
+
 ## Funkcje
 - **Widget** (mały / średni / duży): procent okna 5h i tygodnia, czas do resetu.
 - **Aplikacja „Limity Claude”** (Liquid Glass, tryb jasny/ciemny):
