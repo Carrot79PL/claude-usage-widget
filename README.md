@@ -1,3 +1,5 @@
+> ⬇️ **[Pobierz / Download Claude Usage Widget (DMG)](https://github.com/Carrot79PL/claude-usage-widget/releases/latest)** · macOS 26+ · darmowa / free · pierwsze uruchomienie: prawy przycisk → Otwórz
+
 # Limity Claude — widget i raport zużycia dla macOS
 
 Widget na pulpit macOS i aplikacja raportowa, które pokazują, ile limitu planu Claude (Pro/Max) już wykorzystałeś: **okno 5-godzinne** i **limit tygodniowy**, w procentach, z prognozą i analizą.
