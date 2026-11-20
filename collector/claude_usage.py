@@ -90,6 +90,12 @@ def curl_json(url, headers, body=None):
 
 def refresh(creds):
     oauth = creds["claudeAiOauth"]
+    # Serwer unieważnia stary token w chwili odnowienia — jeśli nowego nie da się zapisać
+    # (np. pełny dysk), logowanie przepada. Dlatego najpierw próbny zapis bez zmian.
+    try:
+        keychain_write(creds)
+    except Exception:
+        raise RuntimeError("Nie można teraz zapisać do pęku kluczy (pełny dysk?) — odnowienie tokenu wstrzymane, spróbuję za minutę.")
     payload = {"grant_type": "refresh_token", "refresh_token": oauth["refreshToken"], "client_id": CLIENT_ID}
     hdrs = {"Content-Type": "application/json", "Accept": "application/json", "User-Agent": UA}
     code, text = 0, ""
