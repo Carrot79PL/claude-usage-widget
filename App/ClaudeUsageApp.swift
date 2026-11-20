@@ -200,6 +200,23 @@ struct TabContent: View {
     let tab: ReportTab
     @ObservedObject var model: ReportModel
 
+    func problemBanner(_ u: Usage) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: "wifi.exclamationmark").font(.system(size: 22, weight: .semibold)).foregroundStyle(Palette.amber)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Brak połączenia z serwerem" + (u.serverDate.map { " od \($0.formatted(date: .abbreviated, time: .shortened))" } ?? ""))
+                    .font(.headline)
+                Text(u.message ?? "Nie udało się pobrać limitów.").font(.subheadline)
+                Text("Poniższe liczby to ostatni odczyt i szacunek z logów — mogą odbiegać od rzeczywistości. Aplikacja sprawdza połączenie co minutę.")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(14)
+        .glassSurface(14, tint: Palette.amber)
+        .padding(.bottom, 16)
+    }
+
     var body: some View {
         if model.usage?.windows.isEmpty ?? true, tab != .about {
             VStack(spacing: 12) {
@@ -209,6 +226,7 @@ struct TabContent: View {
             }
             .frame(maxWidth: .infinity, minHeight: 500)
         } else {
+            if let u = model.usage, u.isProblem, tab != .about { problemBanner(u) }
             switch tab {
             case .overview: OverviewTab(model: model)
             case .week: WeekTab(model: model)

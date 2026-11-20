@@ -253,6 +253,16 @@ def main():
             apply_live_estimate(out, now)
         except Exception as e:
             out["liveError"] = f"{type(e).__name__}: {e}"
+    # powiadomienie macOS przy utracie / odzyskaniu połączenia (tylko przy zmianie stanu)
+    bad = out["status"] in ("login", "error")
+    if bad != bool(st.get("alerted")):
+        st["alerted"] = bad
+        txt = (out.get("message") or "Brak danych z serwera.") if bad else "Połączenie z serwerem przywrócone."
+        try:
+            subprocess.run(["osascript", "-e", f"display notification {json.dumps(txt)} with title \"Limity Claude\""],
+                           timeout=10, capture_output=True)
+        except Exception:
+            pass
     st["interval"] = interval
     out["pollEverySeconds"] = interval
     save_state(st)
