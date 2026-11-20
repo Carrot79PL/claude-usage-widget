@@ -364,20 +364,25 @@ def apply_live_estimate(out, now):
     h, wk = _win(out, "five_hour"), _win(out, "seven_day")
     if h and f5 and last.get("h") is not None:
         hr = _dt(last.get("hr"))
-        if hr and now >= hr:
-            # okno się zresetowało — nowe zaczyna się od pierwszej odpowiedzi po resecie
-            after = [r for r in recs if r["t"] >= hr]
-            if after:
-                start = after[0]["t"].replace(minute=0, second=0, microsecond=0)
-                mark(h, sum(r["cost"] for r in after) * f5, start + timedelta(hours=5))
-            else:
-                mark(h, 0.0, hr)
-                h["resetsAt"] = None
-        else:
+        if hr and now < hr:
             add = cost_since(t0) * f5
             if add >= 0.05:
                 h["percent"] = last["h"]
                 mark(h, last["h"] + add)
+        else:
+            # okno z odczytu już minęło (albo go nie było) — odtwórz bieżące okno 5h z logów
+            ws, wcost = None, 0.0
+            for r in recs:
+                if r["t"] < (hr or t0):
+                    continue
+                if ws is None or r["t"] >= ws + timedelta(hours=5):
+                    ws, wcost = r["t"].replace(minute=0, second=0, microsecond=0), 0.0
+                wcost += r["cost"]
+            if ws and now < ws + timedelta(hours=5):
+                mark(h, wcost * f5, ws + timedelta(hours=5))
+            else:
+                mark(h, 0.0, hr)
+                h["resetsAt"] = None
     if wk and k:
         wr = _dt(last.get("wr"))
         if wr and now >= wr:
